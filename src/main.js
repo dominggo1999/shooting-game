@@ -1,6 +1,9 @@
 import gsap from 'gsap';
+import mobile from 'is-mobile';
 
 const canvas = document.querySelector('canvas');
+
+const isMobile = mobile();
 
 const canvasHeight = window.innerHeight;
 const canvasWidth = window.innerWidth;
@@ -190,14 +193,15 @@ const animate = () => {
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
   // Draw Player first
   player.draw();
-
-  particles.forEach((p, id) => {
-    if (p.alpha <= 0) {
-      particles.splice(id, 1);
-    } else {
-      p.update();
-    }
-  });
+  if (!isMobile) {
+    particles.forEach((p, id) => {
+      if (p.alpha <= 0) {
+        particles.splice(id, 1);
+      } else {
+        p.update();
+      }
+    });
+  }
 
   projectiles.forEach((i, id) => {
     i.update();
@@ -237,17 +241,19 @@ const animate = () => {
       // Remove both projectile and enemy
       if (dist < 1) {
         // Create particles
-        for (let i = 0; i < e.radius * 2; i += 1) {
-          particles.push(new Particle(
-            p.x,
-            p.y,
-            Math.random() * 2,
-            e.color,
-            {
-              x: (Math.random() - 0.5) * (8 * Math.random()),
-              y: (Math.random() - 0.5) * (8 * Math.random()),
-            },
-          ));
+        if (!isMobile) {
+          for (let i = 0; i < e.radius * 2; i += 1) {
+            particles.push(new Particle(
+              p.x,
+              p.y,
+              Math.random() * 2,
+              e.color,
+              {
+                x: (Math.random() - 0.5) * (8 * Math.random()),
+                y: (Math.random() - 0.5) * (8 * Math.random()),
+              },
+            ));
+          }
         }
 
         if (e.radius - 10 > 5) {
